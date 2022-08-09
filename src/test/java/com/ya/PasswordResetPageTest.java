@@ -1,7 +1,6 @@
 package com.ya;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
@@ -38,6 +37,8 @@ public class PasswordResetPageTest {
     @After
     public void tearDown() {
         closeWebDriver();
+        if (user != null)
+            userClientAPI.deleteUser(user.getLogin(), user.getPassword());
     }
 
     @DisplayName("user Can Login From Reset Page Button With Correct Creds")
@@ -51,7 +52,7 @@ public class PasswordResetPageTest {
         loginPageBurger.clickLoginButton();
         MainPageBurger mainPageBurger = page(MainPageBurger.class);
         assertThat("The button Войти isn't turned into Оформить заказ", mainPageBurger.getTextLoginButtonMainPage(), equalTo("Оформить заказ"));
-       // assertThat("The URL isn't equal to main page URL. User isn't switched to main page.", WebDriverRunner.getWebDriver().getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
+        // assertThat("The URL isn't equal to main page URL. User isn't switched to main page.", WebDriverRunner.getWebDriver().getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
     }
 
 }

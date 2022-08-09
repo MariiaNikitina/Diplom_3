@@ -40,6 +40,8 @@ public class HeaderTest {
     @After
     public void tearDown() {
         closeWebDriver();
+        if(user!=null)
+        userClientAPI.deleteUser(user.getLogin(), user.getPassword());
     }
 
     @DisplayName("login User From Header With Correct Credentials")
@@ -53,7 +55,7 @@ public class HeaderTest {
         loginPageBurger.clickLoginButton();
         MainPageBurger mainPageBurger = page(MainPageBurger.class);
         assertThat("The button Войти isn't turned into Оформить заказ", mainPageBurger.getTextLoginButtonMainPage(), equalTo("Оформить заказ"));
-        userClientAPI.deleteUser(user.getLogin(), user.getPassword());
+
     }
 
     @DisplayName("switch From Logo To Account Tab")

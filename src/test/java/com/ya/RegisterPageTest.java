@@ -1,7 +1,6 @@
 package com.ya;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -36,6 +35,8 @@ public class RegisterPageTest {
     @After
     public void tearDown() {
         closeWebDriver();
+        if (user != null)
+            userClientAPI.deleteUser(user.getLogin(), user.getPassword());
     }
 
     public void createUserWithAPI() {
@@ -52,8 +53,8 @@ public class RegisterPageTest {
         registerPageBurger.clickRegistrationButton();
         LoginPageBurger loginPageBurger = page(LoginPageBurger.class);
         assertTrue("User doesn't see login button. User isn't switched to login page.", loginPageBurger.isLoginButtonDisplayed());
-       // assertThat("The URL isn't equal to login URL. User isn't switched to login page.", WebDriverRunner.getWebDriver().getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/login"));
-        userClientAPI.deleteUser(user.getLogin(), user.getPassword());
+        // assertThat("The URL isn't equal to login URL. User isn't switched to login page.", WebDriverRunner.getWebDriver().getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/login"));
+
     }
 
     @DisplayName("user Registration With Small Password Shows Error Message")
@@ -61,8 +62,9 @@ public class RegisterPageTest {
     @Test
     public void userRegistrationWithSmallPasswordShowsErrorMessage() {
         String smallPassword = RandomStringUtils.randomAlphabetic(5).toLowerCase();
-        user = UserDataGenerator.getRandomData();
-        registerPageBurger.fillUserData(user.getName(), user.getLogin(), smallPassword);
+        String correctName= UserDataGenerator.getRandomData().getName();
+        String correctLogin=UserDataGenerator.getRandomData().getLogin();
+        registerPageBurger.fillUserData(correctName,correctLogin, smallPassword);
         registerPageBurger.clickRegistrationButton();
         assertTrue("User doesn't see error message", registerPageBurger.isPasswordErrorDisplayed());
         assertThat("Error message isn't equal to expected", registerPageBurger.getPasswordErrorText(), equalTo("Некорректный пароль"));
@@ -80,6 +82,5 @@ public class RegisterPageTest {
         MainPageBurger mainPageBurger = page(MainPageBurger.class);
         assertTrue("User doesn't see constructor of ingredients. User isn't switched to main page.", mainPageBurger.areIngredientsDisplayed());
         //assertThat("The URL isn't equal to main page URL. User isn't switched to main page.", WebDriverRunner.getWebDriver().getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
-        userClientAPI.deleteUser(user.getLogin(), user.getPassword());
     }
 }
